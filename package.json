@@ -1,6 +1,6 @@
 {
   "name": "@architect/plugin-typescript",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "TypeScript custom runtime + workflows integration for Architect",
   "main": "src/index.js",
   "scripts": {
@@ -16,7 +16,9 @@
   },
   "author": "Ryan Block <hello@ryanblock.com>",
   "license": "Apache-2.0",
-  "files": [ "src/*" ],
+  "files": [
+    "src/*"
+  ],
   "dependencies": {
     "esbuild": "^0.14.11",
     "source-map-support": "^0.5.21"
