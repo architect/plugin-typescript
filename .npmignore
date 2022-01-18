@@ -1,9 +1,0 @@
-.DS_Store
-.git/
-.github/
-.nyc_output/
-coverage/
-coverage/
-node_modules/
-scratch/
-test/

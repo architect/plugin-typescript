@@ -16,6 +16,7 @@
   },
   "author": "Ryan Block <hello@ryanblock.com>",
   "license": "Apache-2.0",
+  "files": [ "src/*" ],
   "dependencies": {
     "esbuild": "^0.14.11",
     "source-map-support": "^0.5.21"
