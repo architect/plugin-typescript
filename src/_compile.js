@@ -9,21 +9,9 @@ function getTsConfig (dir) {
   return false
 }
 
-async function compileProject ({ inventory, stage }) {
+async function compileProject ({ inventory }) {
   let { inv } = inventory
-  let { arc, cwd, build } = inv._project
-
-  let settings = {
-    sourcemaps: [ 'testing', 'staging' ],
-    // TODO publicSrc?
-  }
-  if (arc.typescript) {
-    arc.typescript.forEach(s => {
-      if (Array.isArray(s)) {
-        if (s[0] === 'sourcemaps') settings.sourcemaps = [ ...s.slice(1) ]
-      }
-    })
-  }
+  let { cwd, build } = inv._project
 
   let start = Date.now()
   let globalTsConfig = getTsConfig(cwd)
@@ -36,7 +24,7 @@ async function compileProject ({ inventory, stage }) {
   async function go (lambda) {
     if (lambda.config.runtime !== 'typescript') return
     try {
-      await compileHandler({ cwd, lambda, settings, stage, globalTsConfig })
+      await compileHandler({ inventory, lambda, globalTsConfig })
     }
     catch (err) {
       ok = false
@@ -48,8 +36,27 @@ async function compileProject ({ inventory, stage }) {
   if (ok) console.log(`Compiled project in ${(Date.now() - start) / 1000}s`)
 }
 
-async function compileHandler ({ cwd, lambda, settings, stage, globalTsConfig }) {
+async function compileHandler (params) {
+  let { inventory, lambda, globalTsConfig } = params
+  let { deployStage: stage } = inventory.inv._arc
+  let { arc, cwd } = inventory.inv._project
   let { build, src, handlerFile } = lambda
+  stage = stage || 'testing'
+
+  // Enumerate project TS settings
+  let settings = {
+    sourcemaps: [ 'testing', 'staging' ],
+    // TODO publicSrc?
+  }
+  if (arc.typescript) {
+    arc.typescript.forEach(s => {
+      if (Array.isArray(s)) {
+        if (s[0] === 'sourcemaps') settings.sourcemaps = [ ...s.slice(1) ]
+      }
+    })
+  }
+
+  // Construct esbuild options
   let options = {
     entryPoints: [ join(src, 'index.ts') ],
     bundle: true,
@@ -71,6 +78,7 @@ async function compileHandler ({ cwd, lambda, settings, stage, globalTsConfig })
     }
   }
 
+  // Final config check
   let localConfig = getTsConfig(src)
   /**/ if (localConfig) options.tsConfig = localConfig
   else if (globalTsConfig) options.tsconfig = globalTsConfig

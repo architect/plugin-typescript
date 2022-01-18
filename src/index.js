@@ -21,16 +21,11 @@ module.exports = {
     }
   },
   deploy: {
-    start: async function ({ inventory }) {
-      // if the user supplied deployCmd run it here
-      let { _arc } = inventory.inv
-      await compileProject({ inventory, stage: _arc.deployStage })
-    }
+    // TODO: add support for custom TS check commands (e.g. `tsc -p .`)?
+    start: compileProject
   },
   sandbox: {
-    start: async function ({ inventory }) {
-      await compileProject({ inventory, stage: 'testing' })
-    },
+    start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
         // Second pass filter by Lambda dir
@@ -42,10 +37,9 @@ module.exports = {
         let { name, pragma } = lambda
         let { cwd } = inventory.inv._project
         let globalTsConfig = getTsConfig(cwd)
-
         console.log(`Recompiling handler: @${pragma} ${name}`)
         try {
-          await compileHandler({ lambda, stage: 'testing', globalTsConfig })
+          await compileHandler({ inventory, lambda, globalTsConfig })
           console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
         }
         catch (err) {
