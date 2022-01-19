@@ -79,4 +79,11 @@ sourcemaps testing production
 ```
 
 
-[^1]: Head here for more information about [how `esbuild` makes use of TSConfig](https://esbuild.github.io/api/#tsconfig)
+## Caveats
+
+Architect TypeScript, which uses [`esbuild`](https://esbuild.github.io/), bundles to CommonJS to avoid issues surrounding [transpiling to ESM with second-order dynamic requires](https://github.com/evanw/esbuild/issues/1921). However, due to ongoing [issues surrounding top-level await in esbuild, TypeScript, V8, etc.](https://github.com/evanw/esbuild/issues/253), top-level await is not yet supported.
+
+If you need top-level await, we suggest authoring in plain JavaScript for the time being.
+
+
+[^1]: Head here for more information about [how `esbuild` makes use of TSConfig](https://github.com/evanw/esbuild/issues/253)
