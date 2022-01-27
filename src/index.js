@@ -3,7 +3,7 @@ let { compileProject, compileHandler, getTsConfig } = require('./_compile')
 module.exports = {
   set: {
     runtimes: function ({ inventory }) {
-      let { arc } = inventory._project
+      let { arc } = inventory.inv._project
       let build = '.build'
       if (arc.typescript) {
         arc.typescript.forEach(s => {
