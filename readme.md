@@ -12,7 +12,7 @@
 Into your existing Architect project:
 
 ```sh
-npm i @architect/typescript --save-dev
+npm i @architect/plugin-typescript --save-dev
 ```
 
 Add the following to your Architect project manifest (usually `app.arc`):
