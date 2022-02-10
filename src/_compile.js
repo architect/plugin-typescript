@@ -44,6 +44,7 @@ async function compileHandler (params) {
   stage = stage || 'testing'
 
   // Enumerate project TS settings
+  let configPath
   let settings = {
     sourcemaps: [ 'testing', 'staging' ],
     // TODO publicSrc?
@@ -52,11 +53,13 @@ async function compileHandler (params) {
     arc.typescript.forEach(s => {
       if (Array.isArray(s)) {
         if (s[0] === 'sourcemaps') settings.sourcemaps = [ ...s.slice(1) ]
+        if (s[0] === 'esbuild-config') configPath = join(cwd, s.slice(1)[0])
       }
     })
   }
 
   // Construct esbuild options
+  // The following defaults cannot be changed
   let options = {
     entryPoints: [ join(src, 'index.ts') ],
     bundle: true,
@@ -64,9 +67,18 @@ async function compileHandler (params) {
     format: 'cjs',
     outfile: handlerFile,
   }
+  if (configPath) {
+    // eslint-disable-next-line
+    let config = require(configPath)
+    options = { ...config, ...options }
+  }
+
   if (settings.sourcemaps.includes(stage)) {
     options.sourcemap = 'external'
-    options.banner = { js: sourceMapStatement }
+    if (options.banner?.js) {
+      options.banner.js = options.banner.js + '\n' + sourceMapStatement
+    }
+    else options.banner = { js: sourceMapStatement }
     if (stage !== 'testing') {
       await esbuild({
         entryPoints: [ join(cwd, 'node_modules', 'source-map-support', 'register') ],
@@ -83,6 +95,7 @@ async function compileHandler (params) {
   /**/ if (localConfig) options.tsConfig = localConfig
   else if (globalTsConfig) options.tsconfig = globalTsConfig
 
+  // Run the build
   await esbuild(options)
 }
 

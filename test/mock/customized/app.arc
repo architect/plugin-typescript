@@ -15,3 +15,4 @@ architect/plugin-typescript
 @typescript
 build foo
 sourcemaps production
+esbuild-config esbuild.js
