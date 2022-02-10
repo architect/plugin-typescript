@@ -1,4 +1,6 @@
+.build/
 .DS_Store
 coverage/
+foo/
 node_modules/
 scratch/
