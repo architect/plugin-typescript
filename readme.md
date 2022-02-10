@@ -67,6 +67,9 @@ The following higher-level settings are also available in your Architect project
 - `sourcemaps` - enable sourcemaps for Architect environments; defaults to `testing` + `staging`
   - List of `testing`, `staging`, and/or `production` environment in which to add sourcemaps, or disable all sourcemaps with `false`
   - We strongly advise you do not add sourcemaps to your `production` environment as it may have a meaningful impact on end-user performance and coldstart time
+- `esbuild-config` - add arbitrary [esbuild configuration](https://esbuild.github.io/api/) options
+  - Value is a relative path to a CJS file that exports an object of esbuild options; these options will be passed to the build
+  - Any options that conflict with this plugin's defaults will be ignored
 
 Example:
 
@@ -74,8 +77,12 @@ Example:
 @typescript
 # Build into `./dist`
 build dist
+
 # Disable sourcemaps in `staging`, but add them to `production`; you probably shouldn't actually do this though
 sourcemaps testing production
+
+# Add esbuild plugins
+esbuild-config esbuild-config.js
 ```
 
 
