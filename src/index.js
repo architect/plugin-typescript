@@ -28,8 +28,12 @@ module.exports = {
     start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
-        // Second pass filter by Lambda dir
-        let { lambdasBySrcDir } = inventory.inv
+        let { lambdasBySrcDir, shared } = inventory.inv
+        if (filename.startsWith(shared.src)) {
+          compileProject({ inventory })
+          return
+        }
+        
         let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
         if (!lambda) return
 
