@@ -1,3 +1,4 @@
+let { resolve } = require('path')
 let { compileProject, compileHandler, getTsConfig } = require('./_compile')
 
 module.exports = {
@@ -28,19 +29,32 @@ module.exports = {
     start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
-        let { lambdasBySrcDir, shared } = inventory.inv
-        if (filename.startsWith(shared.src)) {
-          compileProject({ inventory })
-          return
+        let { cwd } = inventory.inv._project
+        let globalTsConfig = getTsConfig(cwd)
+        let tsCompilerOptions = require(globalTsConfig).compilerOptions
+        if (tsCompilerOptions) {
+          let recompileProject = false
+          let tsPaths = tsCompilerOptions.paths || {}
+          for (const [_, paths] of Object.entries(tsPaths)) {
+            paths.map((p) => {
+              if (filename.startsWith(resolve(cwd, tsCompilerOptions.baseUrl, p).replace(/\/?\*$/, ""))) {
+                recompileProject = true
+              }
+            })
+          }
+
+          if (recompileProject) {
+            compileProject({ inventory })
+            return
+          }
         }
-        
+
+        let { lambdasBySrcDir } = inventory.inv
         let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
         if (!lambda) return
 
         let start = Date.now()
         let { name, pragma } = lambda
-        let { cwd } = inventory.inv._project
-        let globalTsConfig = getTsConfig(cwd)
         console.log(`Recompiling handler: @${pragma} ${name}`)
         try {
           await compileHandler({ inventory, lambda, globalTsConfig })
