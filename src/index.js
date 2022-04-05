@@ -38,7 +38,7 @@ module.exports = {
         let tsPaths = tsCompilerOptions.paths || {}
         for (const [_, paths] of Object.entries(tsPaths)) {
           paths.map((p) => {
-            const aliasPath = resolve(cwd, tsCompilerOptions.baseUrl, p).replace(/(\/|\\)?\*$/, "")
+            const aliasPath = resolve(cwd, tsCompilerOptions.baseUrl, p).replace(/(\/|\\)?\*$/, '')
             if (filename.startsWith(aliasPath)) {
               recompileProject = true
             }
