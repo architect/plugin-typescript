@@ -31,6 +31,7 @@ module.exports = {
       let { cwd } = inventory.inv._project
       let globalTsConfig = getTsConfig(cwd)
       let tsCompilerOptions = require(globalTsConfig).compilerOptions
+      // It's possible for the paths alias to include non TS/TSX files.
       if (tsCompilerOptions) {
         let recompileProject = false
         let tsPaths = tsCompilerOptions.paths || {}
