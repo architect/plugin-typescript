@@ -1,3 +1,4 @@
+let { readFileSync } = require('fs')
 let { resolve } = require('path')
 let { compileProject, compileHandler, getTsConfig } = require('./_compile')
 
@@ -30,7 +31,7 @@ module.exports = {
     watcher: async function ({ filename, /* event, */ inventory }) {
       let { cwd } = inventory.inv._project
       let globalTsConfig = getTsConfig(cwd)
-      let tsCompilerOptions = require(globalTsConfig).compilerOptions
+      let tsCompilerOptions = JSON.parse(readFileSync(globalTsConfig)).compilerOptions
       // It's possible for the paths alias to include non TS/TSX files.
       if (tsCompilerOptions) {
         let recompileProject = false
