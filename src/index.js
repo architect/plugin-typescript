@@ -29,6 +29,8 @@ module.exports = {
   sandbox: {
     start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
+      if (/\.(spec)?\.tsx?$/) return
+
       let { cwd } = inventory.inv._project
       let globalTsConfig = getTsConfig(cwd)
       let tsCompilerOptions = JSON.parse(readFileSync(globalTsConfig)).compilerOptions
@@ -51,21 +53,18 @@ module.exports = {
         }
       }
 
-      if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
-        let { lambdasBySrcDir } = inventory.inv
-        let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
-        if (!lambda) return
+      let { lambdasBySrcDir } = inventory.inv
+      let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
+      if (!lambda) return
 
-        let start = Date.now()
-        let { name, pragma } = lambda
-        console.log(`Recompiling handler: @${pragma} ${name}`)
-        try {
-          await compileHandler({ inventory, lambda, globalTsConfig })
-          console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
-        }
-        catch (err) {
-          console.log(`esbuild error:`, err)
-        }
+      let start = Date.now()
+      let { name, pragma } = lambda
+      console.log(`Recompiling handler: @${pragma} ${name}`)
+      try {
+        await compileHandler({ inventory, lambda, globalTsConfig })
+        console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
+      } catch (err) {
+        console.log(`esbuild error:`, err)
       }
     }
   },
