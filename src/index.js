@@ -29,7 +29,8 @@ module.exports = {
   sandbox: {
     start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
-      if (/(.spec)?\.tsx?$/.test(filename)) return
+      if (!filename.endsWith(".ts") && !filename.endsWith(".tsx")) return
+      if (/\.spec\.tsx?$/.test(filename)) return
 
       let { cwd } = inventory.inv._project
       let globalTsConfig = getTsConfig(cwd)
