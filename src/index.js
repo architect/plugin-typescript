@@ -1,3 +1,5 @@
+let { readFileSync } = require('fs')
+let { resolve } = require('path')
 let { compileProject, compileHandler, getTsConfig } = require('./_compile')
 
 module.exports = {
@@ -16,7 +18,7 @@ module.exports = {
         name: 'typescript',
         type: 'transpiled',
         build,
-        baseRuntime: 'nodejs14.x',
+        baseRuntime: 'nodejs16.x',
       }
     }
   },
@@ -27,24 +29,43 @@ module.exports = {
   sandbox: {
     start: compileProject,
     watcher: async function ({ filename, /* event, */ inventory }) {
-      if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
-        // Second pass filter by Lambda dir
-        let { lambdasBySrcDir } = inventory.inv
-        let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
-        if (!lambda) return
+      if (!filename.endsWith(".ts") && !filename.endsWith(".tsx")) return
+      if (/\.spec\.tsx?$/.test(filename)) return
 
-        let start = Date.now()
-        let { name, pragma } = lambda
-        let { cwd } = inventory.inv._project
-        let globalTsConfig = getTsConfig(cwd)
-        console.log(`Recompiling handler: @${pragma} ${name}`)
-        try {
-          await compileHandler({ inventory, lambda, globalTsConfig })
-          console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
+      let { cwd } = inventory.inv._project
+      let globalTsConfig = getTsConfig(cwd)
+      let tsCompilerOptions = JSON.parse(readFileSync(globalTsConfig)).compilerOptions
+      // It's possible for the paths alias to include non TS/TSX files.
+      if (tsCompilerOptions) {
+        let recompileProject = false
+        let tsPaths = tsCompilerOptions.paths || {}
+        for (const [_, paths] of Object.entries(tsPaths)) {
+          paths.map((p) => {
+            const aliasPath = resolve(cwd, tsCompilerOptions.baseUrl, p).replace(/(\/|\\)?\*$/, '')
+            if (filename.startsWith(aliasPath)) {
+              recompileProject = true
+            }
+          })
         }
-        catch (err) {
-          console.log(`esbuild error:`, err)
+
+        if (recompileProject) {
+          compileProject({ inventory })
+          return
         }
+      }
+
+      let { lambdasBySrcDir } = inventory.inv
+      let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
+      if (!lambda) return
+
+      let start = Date.now()
+      let { name, pragma } = lambda
+      console.log(`Recompiling handler: @${pragma} ${name}`)
+      try {
+        await compileHandler({ inventory, lambda, globalTsConfig })
+        console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
+      } catch (err) {
+        console.log(`esbuild error:`, err)
       }
     }
   },

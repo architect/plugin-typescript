@@ -1,5 +1,5 @@
 let { join } = require('path')
-let { existsSync, readFileSync, rmSync } = require('fs')
+let { existsSync, readFileSync, rmSync, writeFileSync } = require('fs')
 let test = require('tape')
 let { get } = require('tiny-json-http')
 let sandbox = require('@architect/sandbox')
@@ -28,16 +28,31 @@ test('Start Sandbox (default project)', async t => {
 })
 
 test('Handler transpiled', async t => {
-  t.plan(4)
+  t.plan(6)
+
   let result = await get({ url: url('ok') })
   t.deepEqual(result.body, { ok: true }, 'Transpiled handler returned correct body')
+
   let handlerPath = join(build, 'http', 'get-ok', 'index.js')
   let sourcemap = handlerPath + '.map'
   t.ok(existsSync(sourcemap), 'Found sourcemap file')
+
   let handler = readFileSync(handlerPath).toString()
   let lines = handler.split('\n').filter(Boolean).length
   t.ok(lines > 1, `Handler is not minified: ${lines} lines`)
   t.doesNotMatch(handler, banner, 'Handler does not have custom banner')
+
+  result = await get({ url: url('shared') })
+  t.deepEqual(result.body, { value: 'foo' }, 'Transpiled handler returned correct body before shared file changes')
+
+  let enPath = join(mock, 'defaults', 'src', 'shared', 'locales', 'en.ts')
+  let oldEn = readFileSync(enPath)
+  writeFileSync(enPath, 'export default "bar";\n')
+
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  result = await get({ url: url('shared') })
+  t.deepEqual(result.body, { value: 'bar' }, 'Transpiled handler returned correct body after shared file changes')
+  writeFileSync(enPath, oldEn)
 })
 
 test('Sourcemap support', async t => {
