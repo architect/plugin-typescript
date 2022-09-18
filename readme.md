@@ -1,4 +1,9 @@
-[<img src="https://assets.arc.codes/architect-logo-500b@2x.png" width=500>](https://www.npmjs.com/package/@architect/plugin-typescript)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/architect/assets.arc.codes/raw/main/public/architect-logo-light-500b%402x.png">
+  <img alt="Architect Logo" width="500px" src="https://github.com/architect/assets.arc.codes/raw/main/public/architect-logo-500b%402x.png">
+</picture>
+</p>
 
 ## [`@architect/plugin-typescript`](https://www.npmjs.com/package/@architect/plugin-typescript)
 
@@ -70,6 +75,8 @@ The following higher-level settings are also available in your Architect project
 - `esbuild-config` - add arbitrary [esbuild configuration](https://esbuild.github.io/api/) options
   - Value is a relative path to a CJS file that exports an object of esbuild options; these options will be passed to the build
   - Any options that conflict with this plugin's defaults will be ignored
+- `base-runtime` - set a different base Node version; defaults to `nodejs14.x`
+  - See [the list of Lambda-supported Node runtimes](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
 
 Example:
 
@@ -83,6 +90,9 @@ sourcemaps testing production
 
 # Add esbuild plugins
 esbuild-config esbuild-config.js
+
+# Set the Lambda base runtime to Node 16
+base-runtime nodejs16.x
 ```
 
 

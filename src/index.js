@@ -1,22 +1,29 @@
-let { compileProject, compileHandler, getTsConfig } = require('./_compile')
+let {
+  compileProject,
+  compileHandler,
+  getTsConfig,
+} = require('./_compile')
 
 module.exports = {
   set: {
     runtimes: function ({ inventory }) {
       let { arc } = inventory.inv._project
       let build = '.build'
+      let baseRuntime = 'nodejs14.x'
       if (arc.typescript) {
-        arc.typescript.forEach(s => {
-          if (Array.isArray(s)) {
-            if (s[0] === 'build' && typeof s[1] === 'string') build = s[1]
-          }
-        })
+        let settings = Object.fromEntries(arc.typescript)
+        if (settings.build && typeof settings.build === 'string') {
+          build = settings.build
+        }
+        if (settings['base-runtime'] && typeof settings['base-runtime'] === 'string') {
+          baseRuntime = settings['base-runtime']
+        }
       }
       return {
         name: 'typescript',
         type: 'transpiled',
         build,
-        baseRuntime: 'nodejs14.x',
+        baseRuntime,
       }
     }
   },
@@ -31,7 +38,8 @@ module.exports = {
         // Second pass filter by Lambda dir
         let { lambdasBySrcDir } = inventory.inv
         let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
-        if (!lambda) return
+
+        if (!lambda) { return }
 
         let start = Date.now()
         let { name, pragma } = lambda
@@ -43,7 +51,7 @@ module.exports = {
           console.log(`Compiled in ${(Date.now() - start) / 1000}s\n`)
         }
         catch (err) {
-          console.log(`esbuild error:`, err)
+          console.log('esbuild error:', err)
         }
       }
     }
