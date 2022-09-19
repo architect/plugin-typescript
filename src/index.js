@@ -16,7 +16,7 @@ module.exports = {
         name: 'typescript',
         type: 'transpiled',
         build,
-        baseRuntime: 'nodejs14.x',
+        baseRuntime: 'nodejs16.x',
       }
     }
   },
