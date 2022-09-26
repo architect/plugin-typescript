@@ -26,10 +26,19 @@ module.exports = {
   },
   sandbox: {
     start: compileProject,
-    watcher: async function ({ filename, /* event, */ inventory }) {
+    watcher: async function (params) {
+      let { filename, /* event, */ inventory } = params
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
+        let { lambdasBySrcDir, shared, views } = inventory.inv
+
+        // Second pass filter by shared dirs
+        if (filename.startsWith(shared?.src) ||
+            filename.startsWith(views?.src)) {
+          await compileProject(params)
+          return
+        }
+
         // Second pass filter by Lambda dir
-        let { lambdasBySrcDir } = inventory.inv
         let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
         if (!lambda) return
 
