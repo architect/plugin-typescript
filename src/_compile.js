@@ -92,7 +92,7 @@ async function compileHandler (params) {
 
   // Final config check
   let localConfig = getTsConfig(src)
-  /**/ if (localConfig) options.tsConfig = localConfig
+  /**/ if (localConfig) options.tsconfig = localConfig
   else if (globalTsConfig) options.tsconfig = globalTsConfig
 
   // Run the build
