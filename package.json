@@ -22,17 +22,17 @@
   ],
   "dependencies": {
     "@types/aws-lambda": "^8.10.109",
-    "esbuild": "^0.16.8",
+    "esbuild": "^0.16.9",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
-    "@architect/architect": "^10.0.0-RC.7",
+    "@architect/architect": "^10.8.2",
     "@architect/eslint-config": "^2.0.1",
     "cross-env": "^7.0.3",
-    "eslint": "^8.8.0",
+    "eslint": "^8.30.0",
     "tap-spec": "^5.0.0",
-    "tape": "^5.5.0",
-    "tiny-json-http": "^7.3.1"
+    "tape": "^5.6.1",
+    "tiny-json-http": "^7.4.2"
   },
   "eslintConfig": {
     "extends": "@architect/eslint-config"
