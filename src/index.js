@@ -9,7 +9,7 @@ module.exports = {
     runtimes: function ({ inventory }) {
       let { arc } = inventory.inv._project
       let build = '.build'
-      let baseRuntime = 'nodejs14.x'
+      let baseRuntime = 'nodejs16.x'
       if (arc.typescript) {
         let settings = Object.fromEntries(arc.typescript)
         if (settings.build && typeof settings.build === 'string') {
@@ -33,10 +33,19 @@ module.exports = {
   },
   sandbox: {
     start: compileProject,
-    watcher: async function ({ filename, /* event, */ inventory }) {
+    watcher: async function (params) {
+      let { filename, /* event, */ inventory } = params
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
+        let { lambdasBySrcDir, shared, views } = inventory.inv
+
+        // Second pass filter by shared dirs
+        if (filename.startsWith(shared?.src) ||
+            filename.startsWith(views?.src)) {
+          await compileProject(params)
+          return
+        }
+
         // Second pass filter by Lambda dir
-        let { lambdasBySrcDir } = inventory.inv
         let lambda = Object.values(lambdasBySrcDir).find(({ src }) => filename.startsWith(src))
 
         if (!lambda) { return }
