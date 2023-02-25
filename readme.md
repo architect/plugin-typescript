@@ -112,4 +112,4 @@ Architect TypeScript, which uses [`esbuild`](https://esbuild.github.io/), bundle
 If you need top-level await, we suggest authoring in plain JavaScript for the time being.
 
 
-[^1]: Head here for more information about [how `esbuild` makes use of TSConfig](https://github.com/evanw/esbuild/issues/253)
+[^1]: Head here for more information about [how `esbuild` makes use of TSConfig](https://esbuild.github.io/api/#tsconfig)
