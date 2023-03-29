@@ -1,5 +1,6 @@
 let { join } = require('path')
-let { existsSync, rmSync } = require('fs')
+let { existsSync } = require('fs')
+let { rm } = require('fs/promises')
 let { build: esbuild } = require('esbuild')
 let sourceMapStatement = `require('source-map-support/register');\n//# sourceMappingURL=index.js.map`
 
@@ -11,13 +12,10 @@ function getTsConfig (dir) {
 
 async function compileProject ({ inventory }) {
   let { inv } = inventory
-  let { cwd, build } = inv._project
+  let { cwd } = inv._project
 
   let start = Date.now()
   let globalTsConfig = getTsConfig(cwd)
-  // It's ok to block Sandbox for this, we can't serve requests until it's done anyway
-  rmSync(build, { recursive: true, force: true })
-
   let ok = true
   console.log(`Compiling TypeScript`)
 
@@ -42,6 +40,8 @@ async function compileHandler (params) {
   let { arc, cwd } = inventory.inv._project
   let { build, src, handlerFile } = lambda
   stage = stage || 'testing'
+
+  await rm(build, { recursive: true, force: true })
 
   // Enumerate project TS settings
   let configPath
