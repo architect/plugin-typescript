@@ -2,6 +2,19 @@
 
 ---
 
+## [1.2.0] 2023-04-10
+
+### Added
+
+- Added support for `create` plugin API; fixes #1410, thanks @pachoclo!
+
+
+### Changed
+
+- Updated dependencies
+
+---
+
 ## [1.1.0] 2023-02-20
 
 ### Added

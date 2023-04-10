@@ -4,3 +4,5 @@ coverage/
 foo/
 node_modules/
 scratch/
+test/mock/defaults/public/
+test/mock/defaults/src/http/get-new/

@@ -45,18 +45,13 @@ Now, simply author and port Lambdas in the `src` tree with `index.ts` handlers. 
 
 ```ts
 // src/http/get-index/index.ts
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
+import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda'
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
-    console.log(`Event: ${JSON.stringify(event, null, 2)}`);
-    console.log(`Context: ${JSON.stringify(context, null, 2)}`);
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            message: 'hello world',
-        }),
-    };
-};
+  console.log(`Event:`, event)
+  console.log(`Context:`, context)
+  return { message: 'hello world' }
+}
 ```
 
 The above function will be automatically transpiled by Architect to `./.build/http/get-index.js`. (The destination build directory is configurable, [see below](#configuration).)

@@ -6,11 +6,12 @@ let sandbox = require('@architect/sandbox')
 
 let port = 6666
 let mock = join(process.cwd(), 'test', 'mock')
-let cwd, build
+let cwd, build, newHandler
 let url = path => `http://localhost:${port}/${path}`
 let banner = /lolidk/
 
 function reset () {
+  rmSync(newHandler, { recursive: true, force: true })
   rmSync(build, { recursive: true, force: true })
 }
 
@@ -21,6 +22,7 @@ function reset () {
 test('Start Sandbox (default project)', async t => {
   t.plan(1)
   cwd = join(mock, 'defaults')
+  newHandler = join(cwd, 'src', 'http', 'get-new')
   build = join(cwd, '.build')
   reset()
   await sandbox.start({ cwd, port, quiet: true })
@@ -57,6 +59,12 @@ test('Sourcemap support', async t => {
     t.ok(lines > 1, `Handler is not minified: ${lines} lines`)
     t.doesNotMatch(handler, banner, 'Handler does not have custom banner')
   }
+})
+
+test('Handler created', async t => {
+  t.plan(1)
+  let result = await get({ url: url('new') })
+  t.deepEqual(result.body, { message: 'Hello world!' }, 'Freshly created and transpiled handler returned correct body')
 })
 
 test('Shut down Sandbox', async t => {

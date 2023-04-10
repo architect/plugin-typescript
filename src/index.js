@@ -4,6 +4,14 @@ let {
   getTsConfig,
 } = require('./_compile')
 
+let body = `import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda'
+
+export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  console.log('Event:', event)
+  console.log('Context:', context)
+  return { message: 'Hello world!' }
+}`
+
 module.exports = {
   set: {
     runtimes: function ({ inventory }) {
@@ -26,6 +34,9 @@ module.exports = {
         baseRuntime,
       }
     }
+  },
+  create: {
+    handlers: () => ({ filename: 'index.ts', body })
   },
   deploy: {
     // TODO: add support for custom TS check commands (e.g. `tsc -p .`)?
