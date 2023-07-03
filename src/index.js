@@ -4,6 +4,9 @@ let {
   getTsConfig,
 } = require('./_compile')
 
+// Prevent TypeScript recompilation upon each sandbox start during tests
+let sandboxCompiled = false
+
 module.exports = {
   set: {
     runtimes: function ({ inventory }) {
@@ -32,7 +35,15 @@ module.exports = {
     start: compileProject
   },
   sandbox: {
-    start: compileProject,
+    start: async function (params)  {
+      if (sandboxCompiled) {
+        console.log(`Already compiled, skipping`)
+        return
+      }
+
+      await compileProject(params)
+      sandboxCompiled = true
+    },
     watcher: async function (params) {
       let { filename, /* event, */ inventory } = params
       if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
