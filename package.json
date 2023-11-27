@@ -1,6 +1,6 @@
 {
   "name": "@architect/plugin-typescript",
-  "version": "1.2.0-RC.0",
+  "version": "1.2.0",
   "description": "TypeScript custom runtime + workflows integration for Architect",
   "main": "src/index.js",
   "scripts": {
