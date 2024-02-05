@@ -17,7 +17,7 @@ module.exports = {
     runtimes: function ({ inventory }) {
       let { arc } = inventory.inv._project
       let build = '.build'
-      let baseRuntime = 'nodejs16.x'
+      let baseRuntime = 'nodejs20.x'
       if (arc.typescript) {
         let settings = Object.fromEntries(arc.typescript)
         if (settings.build && typeof settings.build === 'string') {

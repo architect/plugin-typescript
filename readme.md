@@ -79,7 +79,7 @@ The following higher-level settings are also available in your Architect project
 - `esbuild-config` - add arbitrary [esbuild configuration](https://esbuild.github.io/api/) options
   - Value is a relative path to a CJS file that exports an object of esbuild options; these options will be passed to the build
   - Any options that conflict with this plugin's defaults will be ignored
-- `base-runtime` - set a different base Node.js version; defaults to `nodejs16.x`
+- `base-runtime` - set a different base Node.js version; defaults to `nodejs20.x`
   - See [the list of Lambda-supported Node runtimes](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
 
 Example:
