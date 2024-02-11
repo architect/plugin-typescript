@@ -4,13 +4,13 @@ let {
   getTsConfig,
 } = require('./_compile')
 
-let body = `import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda'
-
-export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
-  console.log('Event:', event)
-  console.log('Context:', context)
-  return { message: 'Hello world!' }
-}`
+let {
+  dynamoDbStreamHandlerBody,
+  httpHandlerBody,
+  sqsHandlerBody,
+  snsHandlerBody,
+  scheduledHandlerBody,
+} = require('./handlers')
 
 module.exports = {
   set: {
@@ -36,7 +36,29 @@ module.exports = {
     }
   },
   create: {
-    handlers: () => ({ filename: 'index.ts', body })
+    handlers: ({ lambda: { pragma } }) => {
+      let body
+      switch (pragma) {
+      case 'http':
+        body = httpHandlerBody
+        break
+      case 'queues':
+        body = sqsHandlerBody
+        break
+      case 'events':
+        body = snsHandlerBody
+        break
+      case 'scheduled':
+        body = scheduledHandlerBody
+        break
+      case 'tables-streams':
+        body = dynamoDbStreamHandlerBody
+        break
+      default:
+        throw Error(`Unknown lambda type: ${pragma}`)
+      }
+      return { filename: 'index.ts', body }
+    }
   },
   deploy: {
     // TODO: add support for custom TS check commands (e.g. `tsc -p .`)?
