@@ -3,7 +3,7 @@ const httpHandlerBody = `import { Context, APIGatewayProxyResult, APIGatewayEven
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   console.log('Event:', event)
   console.log('Context:', context)
-  return { message: 'Hello world!' }
+  return { statusCode: 200, body: JSON.stringify({ message: 'Hello world!' }) }
 }`
 
 const sqsHandlerBody = `import { Context, SQSBatchResponse, SQSEvent } from 'aws-lambda'
