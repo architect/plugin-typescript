@@ -28,3 +28,6 @@ table-stream-new
 
 @scheduled
 scheduled-new rate(1 day)
+
+@ws
+ws-new

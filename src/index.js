@@ -10,6 +10,7 @@ let {
   sqsHandlerBody,
   snsHandlerBody,
   scheduledHandlerBody,
+  websocketHandlerBody
 } = require('./handlers')
 
 module.exports = {
@@ -53,6 +54,9 @@ module.exports = {
         break
       case 'tables-streams':
         body = dynamoDbStreamHandlerBody
+        break
+      case 'ws':
+        body = websocketHandlerBody
         break
       default:
         throw Error(`Unknown lambda type: ${pragma}`)

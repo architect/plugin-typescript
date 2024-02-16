@@ -7,7 +7,9 @@ let sandbox = require('@architect/sandbox')
 
 let port = 6666
 let mock = join(process.cwd(), 'test', 'mock')
-let cwd, build, newHandler, queueHandler, eventHandler, scheduledHandler, tableStreamHandler
+let cwd, build, newHandler, queueHandler, eventHandler
+  , scheduledHandler, tableStreamHandler
+  , wsConnect, wsDisconnect, wsHandler, wsNew
 let url = path => `http://localhost:${port}/${path}`
 let banner = /lolidk/
 
@@ -17,6 +19,10 @@ function reset () {
   rmSync(eventHandler, { recursive: true, force: true })
   rmSync(scheduledHandler, { recursive: true, force: true })
   rmSync(tableStreamHandler, { recursive: true, force: true })
+  rmSync(wsHandler, { recursive: true, force: true })
+  rmSync(wsConnect, { recursive: true, force: true })
+  rmSync(wsDisconnect, { recursive: true, force: true })
+  rmSync(wsNew, { recursive: true, force: true })
   rmSync(build, { recursive: true, force: true })
 }
 
@@ -52,6 +58,10 @@ test('Start Sandbox (default project)', async t => {
   eventHandler = join(cwd, 'src', 'events', 'event-new')
   scheduledHandler = join(cwd, 'src', 'scheduled', 'scheduled-new')
   tableStreamHandler = join(cwd, 'src', 'tables-streams', 'table-stream-new')
+  wsHandler = join(cwd, 'src', 'ws', 'default')
+  wsConnect = join(cwd, 'src', 'ws', 'connect')
+  wsDisconnect = join(cwd, 'src', 'ws', 'disconnect')
+  wsNew = join(cwd, 'src', 'ws', 'ws-new')
   build = join(cwd, '.build')
   reset()
   await sandbox.start({ cwd, port, quiet: true })
@@ -94,6 +104,15 @@ test('Table Stream Handler typechecks', async t => {
   t.plan(1)
   let typecheckErros = checkTypeScriptFile(tableStreamHandler + '/index.ts')
   t.ok(typecheckErros, 'Table Stream handler typechecks')
+})
+
+test('WS Handlers typecheck', async t => {
+  t.plan(4)
+  let handlers = [ wsHandler, wsConnect, wsDisconnect, wsNew ]
+  handlers.forEach(handler => {
+    let typecheckErros = checkTypeScriptFile(handler + '/index.ts')
+    t.ok(typecheckErros, 'WS handler typechecks')
+  })
 })
 
 test('Sourcemap support', async t => {
