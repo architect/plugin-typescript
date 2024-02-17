@@ -44,11 +44,22 @@ export const handler = async (event: APIGatewayProxyWebsocketEventV2, context: C
   return { statusCode: 200 }
 }`
 
-module.exports = {
-  httpHandlerBody,
-  sqsHandlerBody,
-  snsHandlerBody,
-  scheduledHandlerBody,
-  dynamoDbStreamHandlerBody,
-  websocketHandlerBody
+
+const customLambdaHandler = `import { Handler } from 'aws-lambda'
+
+export const handler: Handler = async (event, context) => {
+  console.log('Event:', event)
+  console.log('Context:', context)
+}`
+
+const pragmaHandlerMap = {
+  'http': httpHandlerBody,
+  'ws': websocketHandlerBody,
+  'queues': sqsHandlerBody,
+  'events': snsHandlerBody,
+  'scheduled': scheduledHandlerBody,
+  'table-streams': dynamoDbStreamHandlerBody,
+  'custom': customLambdaHandler
 }
+
+module.exports = pragmaHandlerMap

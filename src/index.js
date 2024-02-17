@@ -4,14 +4,7 @@ let {
   getTsConfig,
 } = require('./_compile')
 
-let {
-  dynamoDbStreamHandlerBody,
-  httpHandlerBody,
-  sqsHandlerBody,
-  snsHandlerBody,
-  scheduledHandlerBody,
-  websocketHandlerBody
-} = require('./handlers')
+let handlers = require('./handlers')
 
 module.exports = {
   set: {
@@ -38,29 +31,7 @@ module.exports = {
   },
   create: {
     handlers: ({ lambda: { pragma } }) => {
-      let body
-      switch (pragma) {
-      case 'http':
-        body = httpHandlerBody
-        break
-      case 'queues':
-        body = sqsHandlerBody
-        break
-      case 'events':
-        body = snsHandlerBody
-        break
-      case 'scheduled':
-        body = scheduledHandlerBody
-        break
-      case 'tables-streams':
-        body = dynamoDbStreamHandlerBody
-        break
-      case 'ws':
-        body = websocketHandlerBody
-        break
-      default:
-        throw Error(`Unknown lambda type: ${pragma}`)
-      }
+      let body = handlers[pragma] ?? handlers.custom
       return { filename: 'index.ts', body }
     }
   },

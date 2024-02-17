@@ -12,6 +12,8 @@ get /new
 @plugins
 architect/plugin-typescript
   src ../../..
+custom-lambda-plugin
+  src ./src/custom-lambda-plugin
 
 @tables
 table-stream-new

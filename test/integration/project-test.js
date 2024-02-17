@@ -8,7 +8,7 @@ let sandbox = require('@architect/sandbox')
 let port = 6666
 let mock = join(process.cwd(), 'test', 'mock')
 let cwd, build, newHandler, queueHandler, eventHandler
-  , scheduledHandler, tableStreamHandler
+  , scheduledHandler, tableStreamHandler, customHandler
   , wsConnect, wsDisconnect, wsHandler, wsNew
 let url = path => `http://localhost:${port}/${path}`
 let banner = /lolidk/
@@ -23,6 +23,7 @@ function reset () {
   rmSync(wsConnect, { recursive: true, force: true })
   rmSync(wsDisconnect, { recursive: true, force: true })
   rmSync(wsNew, { recursive: true, force: true })
+  rmSync(customHandler, { recursive: true, force: true })
   rmSync(build, { recursive: true, force: true })
 }
 
@@ -62,6 +63,7 @@ test('Start Sandbox (default project)', async t => {
   wsConnect = join(cwd, 'src', 'ws', 'connect')
   wsDisconnect = join(cwd, 'src', 'ws', 'disconnect')
   wsNew = join(cwd, 'src', 'ws', 'ws-new')
+  customHandler = join(cwd, 'src', 'custom')
   build = join(cwd, '.build')
   reset()
   await sandbox.start({ cwd, port, quiet: true })
@@ -104,6 +106,13 @@ test('Table Stream Handler typechecks', async t => {
   t.plan(1)
   let typecheckErros = checkTypeScriptFile(tableStreamHandler + '/index.ts')
   t.ok(typecheckErros, 'Table Stream handler typechecks')
+})
+
+
+test('Custom Handler typechecks', async t => {
+  t.plan(1)
+  let typecheckErros = checkTypeScriptFile(customHandler + '/index.ts')
+  t.ok(typecheckErros, 'Custom handler typechecks')
 })
 
 test('WS Handlers typecheck', async t => {
