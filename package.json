@@ -21,20 +21,20 @@
     "src/*"
   ],
   "dependencies": {
-    "@types/aws-lambda": "^8.10.133",
-    "esbuild": "^0.20.0",
+    "@types/aws-lambda": "^8.10.136",
+    "esbuild": "^0.20.2",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
-    "@architect/architect": "^11.0.5",
+    "@architect/architect": "^11.0.6",
     "@architect/eslint-config": "^2.1.2",
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.30",
     "cross-env": "^7.0.3",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "tap-arc": "^1.2.2",
     "tape": "^5.7.5",
     "tiny-json-http": "^7.5.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   },
   "eslintConfig": {
     "extends": "@architect/eslint-config"

@@ -2,6 +2,14 @@
 
 ---
 
+## [2.1.0] 2024-03-26
+
+### Added
+
+- Added boilerplate handlers for non `@http` Lambda types; thanks @mtranter!
+
+---
+
 ## [2.0.0] 2024-02-05
 
 ### Changed
